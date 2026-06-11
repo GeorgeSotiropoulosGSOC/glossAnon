@@ -1,12 +1,3 @@
-"""Core data structures shared across the whole library.
-
-These types are deliberately dependency-free (standard library only) so that
-every other module - recognizers, the engine, the API and the CLI - can rely
-on them without pulling in heavy packages. They form the stable contract a
-host pipeline (PDF -> markdown -> clear text -> anonymization) integrates
-against.
-"""
-
 from __future__ import annotations
 
 from dataclasses import dataclass, field, asdict
@@ -26,11 +17,11 @@ class EntityType(str, Enum):
     EMAIL = "EMAIL"
     PHONE = "PHONE"
     PERSON = "PERSON"
-    # Reserved for future rounds / extensions:
+
     ORG = "ORG"
     LOCATION = "LOCATION"
-    AFM = "AFM"          # Greek tax id
-    AMKA = "AMKA"        # Greek social security number
+    AFM = "AFM"          
+    AMKA = "AMKA"        
     IBAN = "IBAN"
     URL = "URL"
     DATE = "DATE"
@@ -79,15 +70,6 @@ class Entity:
 
 @dataclass
 class AnonymizationResult:
-    """The outcome of anonymizing a single text.
-
-    Attributes:
-        text: The anonymized output text.
-        entities: The entities that were detected and replaced, sorted by
-            their position in the *original* text.
-        original_text: The untouched input (kept optional so callers can drop
-            it to avoid retaining sensitive data in memory/logs).
-    """
 
     text: str
     entities: List[Entity] = field(default_factory=list)
