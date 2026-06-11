@@ -1,0 +1,49 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "glossanon"
+version = "0.1.0"
+description = "Lightweight ML-assisted anonymization for Greek text (emails, phone numbers, names)."
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "Apache-2.0" }
+authors = [{ name = "GlossAPI GSoC" }]
+keywords = ["anonymization", "greek", "gdpr", "pii", "nlp", "presidio", "glossapi"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: OS Independent",
+    "Topic :: Text Processing :: Linguistic",
+]
+
+# Core dependencies are intentionally tiny: the engine works out of the box
+# with only the standard library. Heavy ML backends are opt-in extras.
+dependencies = []
+
+[project.optional-dependencies]
+# REST interface
+api = ["fastapi>=0.110", "uvicorn>=0.27", "pydantic>=2.0"]
+# Optional ML backend for stronger name/organization detection
+ml = ["presidio-analyzer>=2.2", "spacy>=3.7"]
+# Development / testing
+dev = ["pytest>=7.0", "httpx>=0.27"]
+all = [
+    "fastapi>=0.110", "uvicorn>=0.27", "pydantic>=2.0",
+    "presidio-analyzer>=2.2", "spacy>=3.7",
+    "pytest>=7.0", "httpx>=0.27",
+]
+
+[project.scripts]
+glossanon = "glossanon.cli:main"
+glossanon-serve = "glossanon.api.server:main"
+
+[project.urls]
+Homepage = "https://github.com/eellak/glossAPI"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+glossanon = ["data/*.txt"]
