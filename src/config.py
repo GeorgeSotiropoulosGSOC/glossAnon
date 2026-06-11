@@ -1,12 +1,3 @@
-"""Configuration for the anonymization engine.
-
-A single ``AnonymizerConfig`` object controls which recognizers run, how
-detected entities are replaced, and the confidence threshold below which
-detections are discarded. Keeping all knobs in one dataclass makes the tool
-easy to drive from the library, the CLI (flags) and the REST API (JSON body)
-in a consistent way.
-"""
-
 from __future__ import annotations
 
 from dataclasses import dataclass, field
@@ -17,16 +8,7 @@ from .types import EntityType
 
 
 class Strategy(str, Enum):
-    """How a detected entity should be replaced in the output text.
 
-    - REDACT: replace with a typed placeholder, e.g. ``[EMAIL]``.
-    - TAG: replace with a typed, indexed placeholder, e.g. ``[EMAIL_1]`` so the
-      same entity keeps a stable label (useful for downstream pipelines).
-    - MASK: replace every character with a mask char, e.g. ``********``.
-    - HASH: replace with a short deterministic hash of the value, allowing
-      consistent pseudonymization without revealing the original.
-    - REMOVE: drop the entity text entirely.
-    """
 
     REDACT = "redact"
     TAG = "tag"
@@ -35,8 +17,6 @@ class Strategy(str, Enum):
     REMOVE = "remove"
 
 
-# Sensible default confidence floors per entity type. Regex-based entities are
-# reliable, so they sit high; heuristic person detection is noisier.
 DEFAULT_THRESHOLDS: Dict[EntityType, float] = {
     EntityType.EMAIL: 0.5,
     EntityType.PHONE: 0.5,
@@ -46,27 +26,6 @@ DEFAULT_THRESHOLDS: Dict[EntityType, float] = {
 
 @dataclass
 class AnonymizerConfig:
-    """Tunable settings for an :class:`~glossanon.engine.Anonymizer`.
-
-    Attributes:
-        entities: Which entity types to detect. Defaults to the standalone
-            trio: email, phone, person.
-        strategy: Default replacement strategy applied to all entities.
-        per_entity_strategy: Optional overrides, e.g. hash emails but redact
-            names.
-        score_threshold: Global minimum confidence; entities scoring lower are
-            dropped.
-        per_entity_threshold: Optional per-type minimum confidence overrides.
-        mask_char: Character used by the MASK strategy.
-        hash_length: Number of hex chars kept for the HASH strategy.
-        hash_salt: Salt mixed into HASH so pseudonyms differ across datasets.
-        normalize_ocr: Run the OCR/text normalization pass before detection.
-        use_ml: Enable the optional spaCy/Presidio backend if installed.
-        ml_model: Name of the spaCy model to load when ``use_ml`` is on.
-        markdown_aware: Skip fenced code blocks / inline code when anonymizing
-            markdown produced by a PDF->md pipeline.
-        keep_original: Retain the original text on the result object.
-    """
 
     entities: List[EntityType] = field(
         default_factory=lambda: [
@@ -105,11 +64,7 @@ class AnonymizerConfig:
 
     @classmethod
     def from_dict(cls, data: Optional[Dict]) -> "AnonymizerConfig":
-        """Build a config from a plain dict (CLI/JSON friendly).
-
-        Unknown keys are ignored so callers can pass through extra metadata
-        without breaking. Enum-valued fields accept their string form.
-        """
+       
         data = dict(data or {})
         cfg = cls()
         if "entities" in data and data["entities"] is not None:
