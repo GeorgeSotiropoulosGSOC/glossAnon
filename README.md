@@ -1,4 +1,6 @@
-# glossanon
+# glossanon 
+
+# A Google Summer of Code project 
 
 Anonymizer for Greek text. Finds and replaces personal data: emails, phone
 numbers, names, ΑΦΜ, ΑΜΚΑ and IBAN. Lets Greek documents be shared safely.
